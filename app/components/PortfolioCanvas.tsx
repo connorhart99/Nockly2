@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Canvas from './Canvas';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 
 // Portfolio items using images from assets folder
@@ -100,7 +100,7 @@ const PortfolioItem: React.FC<PortfolioItemProps> = ({
       }
     };
     
-    // Use the appropriate config based on distance, or the furthest one for larger distances
+    // Use the appropriate config based on distance
     const config = baseConfig[Math.min(absDistance, 2) as keyof typeof baseConfig];
     
     return config;
@@ -241,7 +241,7 @@ const PortfolioCanvas = () => {
   }, [activeIndex, isTransitioning]);
 
   return (
-    <Canvas className="bg-dark-brown">
+    <Canvas>
       <div className="w-full h-full flex flex-col items-center justify-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-12">Our Portfolio</h2>
         
@@ -270,34 +270,6 @@ const PortfolioCanvas = () => {
                 distanceFromActive={index - activeIndex}
               />
             ))}
-          </div>
-
-          {/* Navigation dots */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2 mb-4">
-            {portfolioItems.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => navigateToItem(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === activeIndex 
-                    ? 'bg-white scale-100' 
-                    : 'bg-white/30 hover:bg-white/60'
-                }`}
-                aria-label={`Go to project ${index + 1}`}
-              />
-            ))}
-          </div>
-          
-          {/* Left/Right swipe instruction indicators */}
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/20 select-none pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </div>
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/20 select-none pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
           </div>
         </div>
       </div>
