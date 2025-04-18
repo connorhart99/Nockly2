@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #260d00;
+  --forest-green: #05421b;
+  --deep-burgundy: #380000;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--background);
+  color: white;
+  height: 100%;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .fullscreen-canvas {
+    @apply w-screen h-screen flex flex-col justify-center items-center bg-dark-brown overflow-hidden;
+  }
+} 
