@@ -91,6 +91,7 @@ export default function ServicesCanvas() {
     created() {
       setLoaded(true);
     },
+    rubberband: false,
   });
 
   // Handle keyboard navigation
@@ -105,8 +106,32 @@ export default function ServicesCanvas() {
       }
     };
 
+    const handleWheel = (e: WheelEvent) => {
+      if (!instanceRef.current) return;
+      
+      // Prevent default only for horizontal scroll or when holding shift
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+        e.preventDefault();
+        
+        // Determine scroll direction (normalize the delta)
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        
+        if (delta > 0) {
+          instanceRef.current.next();
+        } else if (delta < 0) {
+          instanceRef.current.prev();
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    // Use passive: false to allow preventDefault()
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+    };
   }, [instanceRef]);
 
   return (
