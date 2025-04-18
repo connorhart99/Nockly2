@@ -8,6 +8,10 @@
   --deep-burgundy: #380000;
 }
 
+html {
+  font-size: 16px;
+}
+
 html,
 body {
   padding: 0;
@@ -17,14 +21,64 @@ body {
   color: white;
   height: 100%;
   width: 100%;
+  
+  /* Optimize rendering for performance */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* Apply hardware acceleration and prevent flickering */
+html, body, #__next, main, div {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+}
+
+/* Prevent text selection which can cause flickering */
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Hide scrollbars but maintain functionality */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom height for portfolio container */
+@media (min-width: 768px) {
+  .md\:h-108 {
+    height: 27rem; /* 432px */
+  }
+}
+
+/* Perspective for 3D effect */
+.portfolio-perspective {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
 @layer components {
   .fullscreen-canvas {
     @apply w-screen h-screen flex flex-col justify-center items-center bg-dark-brown overflow-hidden;
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 } 

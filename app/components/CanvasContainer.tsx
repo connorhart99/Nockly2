@@ -13,65 +13,89 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastInteractionTime = useRef<number>(0);
+  const interactionCooldown = 300; // ms
 
-  // Handle keyboard navigation
+  // Handle keyboard navigation with throttling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const now = Date.now();
+      if (now - lastInteractionTime.current < interactionCooldown) return;
+      
       if (e.key === 'ArrowUp' && currentIndex > 0) {
         setCurrentIndex(prev => prev - 1);
+        lastInteractionTime.current = now;
       } else if (e.key === 'ArrowDown' && currentIndex < canvases.length - 1) {
         setCurrentIndex(prev => prev + 1);
+        lastInteractionTime.current = now;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, canvases.length]);
+  }, [currentIndex, canvases.length, interactionCooldown]);
 
-  // Handle wheel/scroll navigation
+  // Optimized wheel/scroll navigation
   useEffect(() => {
-    let lastScrollTime = 0;
-    const scrollCooldown = 300;
-
+    // Use passive listener for better performance
     const handleWheel = (e: WheelEvent) => {
-      const now = Date.now();
-      if (now - lastScrollTime < scrollCooldown) return;
+      // Prevent default to stop browser scrolling behavior
+      e.preventDefault();
       
-      if (e.deltaY < 0 && currentIndex > 0) {
+      const now = Date.now();
+      if (now - lastInteractionTime.current < interactionCooldown) return;
+      
+      // Use a higher threshold to reduce accidental scrolls
+      const threshold = 20;
+      
+      if (e.deltaY < -threshold && currentIndex > 0) {
         setCurrentIndex(prev => prev - 1);
-        lastScrollTime = now;
-      } else if (e.deltaY > 0 && currentIndex < canvases.length - 1) {
+        lastInteractionTime.current = now;
+      } else if (e.deltaY > threshold && currentIndex < canvases.length - 1) {
         setCurrentIndex(prev => prev + 1);
-        lastScrollTime = now;
+        lastInteractionTime.current = now;
       }
     };
 
-    window.addEventListener('wheel', handleWheel);
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [currentIndex, canvases.length]);
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => container.removeEventListener('wheel', handleWheel);
+    }
+  }, [currentIndex, canvases.length, interactionCooldown]);
 
-  // Calculate the drag constraints
+  // Optimized drag handling
   const swipeThreshold = 50; // Pixels needed to swipe
   
   const handleDragEnd = (info: any) => {
+    const now = Date.now();
+    if (now - lastInteractionTime.current < interactionCooldown) return;
+    
     const offset = info.offset.y;
     
     if (offset > swipeThreshold && currentIndex > 0) {
       // Swiped down, go to previous
       setCurrentIndex(prev => prev - 1);
+      lastInteractionTime.current = now;
     } else if (offset < -swipeThreshold && currentIndex < canvases.length - 1) {
       // Swiped up, go to next
       setCurrentIndex(prev => prev + 1);
+      lastInteractionTime.current = now;
     }
   };
 
   // Handle direct navigation to a specific canvas
   const handleIndicatorClick = (index: number) => {
     if (index === currentIndex) return;
+    
+    const now = Date.now();
+    if (now - lastInteractionTime.current < interactionCooldown) return;
+    
     setCurrentIndex(index);
+    lastInteractionTime.current = now;
   };
 
-  // Determine which canvases to render
+  // Determine which canvases to render - only current and adjacent
   const renderIndexes: number[] = [];
   // Always render current canvas
   renderIndexes.push(currentIndex);
@@ -85,16 +109,19 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden touch-none" ref={containerRef}>
+    <div 
+      className="h-screen w-screen overflow-hidden touch-none will-change-transform" 
+      ref={containerRef}
+    >
       <div 
         className="relative h-full w-full"
         style={{ 
-          transformStyle: 'preserve-3d',
-          perspective: '1000px'
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
         }}
       >
         {canvases.map((canvas, index) => {
-          // Only render canvases that are current, previous or next
+          // Only render canvases that are current or adjacent
           if (!renderIndexes.includes(index)) return null;
           
           // Calculate position relative to current index
@@ -109,17 +136,24 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
                 y: `${position * 100}%`,
                 scale: 1 - Math.abs(position) * 0.05, // Slightly scale down non-current canvases
                 zIndex: 10 - Math.abs(position),
-                filter: position !== 0 ? 'brightness(0.8)' : 'brightness(1)' // Dim non-current canvases
               }}
               transition={{
                 type: 'spring',
-                stiffness: 400,
-                damping: 30,
-                restDelta: 0.001
+                stiffness: 300, // Reduced from 400 to be gentler
+                damping: 40, // Increased from 30 for less oscillation
+                restDelta: 0.005, // Reduced precision to improve performance
+                restSpeed: 0.005, // Added to stop animation sooner
+              }}
+              style={{
+                willChange: 'transform',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transformStyle: 'preserve-3d'
               }}
               drag="y"
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.4}
+              dragElastic={0.2} // Reduced from 0.4 for less strain on GPU
+              dragTransition={{ bounceStiffness: 300, bounceDamping: 40 }}
               onDragStart={() => setIsDragging(true)}
               onDragEnd={(e, info) => {
                 setIsDragging(false);
@@ -132,50 +166,23 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
         })}
       </div>
 
-      {/* Progress indicator */}
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50">
+      {/* Simplified Progress indicator */}
+      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 select-none">
         <div className="flex flex-col space-y-2">
           {canvases.map((_, index) => (
-            <div
+            <button
               key={index}
-              className={`w-2 h-12 rounded-full transition-all cursor-pointer ${
+              className={`w-2 h-12 rounded-full transition-all cursor-pointer border-0 outline-none ${
                 index === currentIndex
                   ? 'bg-white scale-y-100'
                   : 'bg-white/30 scale-y-75 hover:bg-white/60'
               }`}
               onClick={() => handleIndicatorClick(index)}
               aria-label={`Go to slide ${index + 1}`}
-              role="button"
               tabIndex={0}
             />
           ))}
         </div>
-      </div>
-
-      {/* Navigation arrows */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center">
-        {currentIndex > 0 && (
-          <button 
-            onClick={() => setCurrentIndex(prev => prev - 1)}
-            className="text-white bg-forest-green/70 hover:bg-forest-green p-2 rounded-full mb-2 transition-colors focus:outline-none"
-            aria-label="Previous slide"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-          </button>
-        )}
-        {currentIndex < canvases.length - 1 && (
-          <button 
-            onClick={() => setCurrentIndex(prev => prev + 1)}
-            className="text-white bg-forest-green/70 hover:bg-forest-green p-2 rounded-full transition-colors focus:outline-none"
-            aria-label="Next slide"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        )}
       </div>
     </div>
   );
