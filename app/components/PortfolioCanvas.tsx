@@ -67,7 +67,7 @@ const PortfolioCard = ({
               </div>
             )}
           </div>
-          <div className="p-4 md:p-6 bg-forest-green">
+          <div className="p-4 md:p-6 bg-forest-green text-center">
             <h3 className="text-xl md:text-2xl font-semibold mb-2">{title}</h3>
             <a 
               href={externalUrl}
@@ -142,7 +142,7 @@ export default function PortfolioCanvas() {
       <div className="w-full h-full flex flex-col items-center justify-center">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 px-4 text-center">Our Portfolio</h2>
         
-        <div className="w-full max-w-7xl px-0">
+        <div className="w-full max-w-7xl px-0 relative">
           <div ref={sliderRef} className="keen-slider">
             {portfolioItems.map((item, idx) => (
               <PortfolioCard
@@ -154,18 +154,45 @@ export default function PortfolioCanvas() {
           </div>
           
           {loaded && instanceRef.current && (
-            <div className="flex justify-center gap-2 mt-4 md:mt-8">
-              {[...Array(portfolioItems.length)].map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    instanceRef.current?.moveToIdx(idx);
-                  }}
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all ${
-                    currentSlide === idx ? 'bg-white scale-125' : 'bg-white/50'
-                  }`}
-                />
-              ))}
+            <div className="flex justify-center gap-8 mt-8">
+              <button
+                onClick={() => instanceRef.current?.prev()}
+                className={`p-3 rounded-full bg-forest-green/80 hover:bg-forest-green transition-all transform hover:scale-110 ${
+                  currentSlide === 0 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-70 cursor-pointer'
+                }`}
+                disabled={currentSlide === 0}
+                aria-label="Previous slide"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  strokeWidth={2} 
+                  stroke="currentColor" 
+                  className="w-6 h-6"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={() => instanceRef.current?.next()}
+                className={`p-3 rounded-full bg-forest-green/80 hover:bg-forest-green transition-all transform hover:scale-110 ${
+                  currentSlide === portfolioItems.length - 1 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-70 cursor-pointer'
+                }`}
+                disabled={currentSlide === portfolioItems.length - 1}
+                aria-label="Next slide"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  strokeWidth={2} 
+                  stroke="currentColor" 
+                  className="w-6 h-6"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
             </div>
           )}
         </div>
