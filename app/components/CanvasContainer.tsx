@@ -165,25 +165,6 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
           );
         })}
       </div>
-
-      {/* Simplified Progress indicator */}
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 select-none">
-        <div className="flex flex-col space-y-2">
-          {canvases.map((_, index) => (
-            <button
-              key={index}
-              className={`w-2 h-12 rounded-full transition-all cursor-pointer border-0 outline-none ${
-                index === currentIndex
-                  ? 'bg-white scale-y-100'
-                  : 'bg-white/30 scale-y-75 hover:bg-white/60'
-              }`}
-              onClick={() => handleIndicatorClick(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              tabIndex={0}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
