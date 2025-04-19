@@ -50,7 +50,6 @@ const ServiceCard = ({
               onError={() => setImageError(true)}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-forest-green/30"></div>
           </div>
           <div className="p-4 md:p-6 bg-forest-green text-center">
             <h3 className="text-xl md:text-2xl font-semibold mb-2">{title}</h3>

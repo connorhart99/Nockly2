@@ -2,10 +2,10 @@ import Canvas from './Canvas';
 
 const AboutCanvas = () => {
   return (
-    <Canvas className="bg-dark-brown">
+    <Canvas>
       <div className="max-w-4xl mx-auto text-center px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-8">About Us</h2>
-        <div className="bg-forest-green/50 p-8 rounded-lg">
+        <div className="bg-forest-green p-8 rounded-lg">
           <p className="text-xl mb-6">
             We are a team of passionate web designers and developers dedicated to crafting beautiful, 
             functional websites that help businesses grow.

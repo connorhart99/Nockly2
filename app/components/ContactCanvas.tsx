@@ -28,10 +28,10 @@ const ContactCanvas = () => {
   };
 
   return (
-    <Canvas className="bg-dark-brown">
-      <div className="max-w-4xl mx-auto w-full px-4">
+    <Canvas>
+      <div className="max-w-4xl mx-auto text-center px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center">Contact Us</h2>
-        <div className="bg-forest-green/30 p-8 rounded-lg">
+        <div className="bg-forest-green p-8 rounded-lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-lg mb-2">Name</label>
@@ -42,7 +42,7 @@ const ContactCanvas = () => {
                 value={formState.name}
                 onChange={handleChange}
                 required
-                className="w-full p-3 rounded-lg bg-dark-brown/50 border border-white/20 focus:border-white focus:outline-none"
+                className="w-full p-3 rounded-lg bg-dark-brown border border-white/20 focus:border-white focus:outline-none"
               />
             </div>
             <div>
@@ -54,7 +54,7 @@ const ContactCanvas = () => {
                 value={formState.email}
                 onChange={handleChange}
                 required
-                className="w-full p-3 rounded-lg bg-dark-brown/50 border border-white/20 focus:border-white focus:outline-none"
+                className="w-full p-3 rounded-lg bg-dark-brown border border-white/20 focus:border-white focus:outline-none"
               />
             </div>
             <div>
@@ -66,17 +66,15 @@ const ContactCanvas = () => {
                 onChange={handleChange}
                 required
                 rows={5}
-                className="w-full p-3 rounded-lg bg-dark-brown/50 border border-white/20 focus:border-white focus:outline-none resize-none"
+                className="w-full p-3 rounded-lg bg-dark-brown border border-white/20 focus:border-white focus:outline-none resize-none"
               ></textarea>
             </div>
-            <div>
-              <button 
-                type="submit"
-                className="bg-deep-burgundy hover:bg-deep-burgundy/80 text-white px-8 py-3 rounded-lg text-xl font-semibold transition-colors w-full"
-              >
-                Send Message
-              </button>
-            </div>
+            <button 
+              type="submit"
+              className="bg-deep-burgundy hover:bg-deep-burgundy/80 text-white px-8 py-3 rounded-lg text-xl font-semibold transition-colors w-full"
+            >
+              Send Message
+            </button>
           </form>
         </div>
       </div>

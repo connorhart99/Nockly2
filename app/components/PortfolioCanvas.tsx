@@ -58,7 +58,6 @@ const PortfolioCard = ({
               onError={() => setImageError(true)}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-forest-green/30"></div>
             {isActive && (
               <div className="absolute inset-0 bg-deep-burgundy/50 opacity-0 hover:opacity-90 transition-opacity duration-300 flex items-center justify-center">
                 <span className="text-xl font-semibold text-center px-4">

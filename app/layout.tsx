@@ -1,9 +1,13 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Image from 'next/image';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Nockly | We Craft Websites',
-  description: 'Professional website development agency specializing in custom web solutions',
+  title: 'Nockly',
+  description: 'We Craft Sites To Convert',
 };
 
 // Preload critical fonts
@@ -32,8 +36,23 @@ export default function RootLayout({
         {preloadFonts()}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </head>
-      <body suppressHydrationWarning>
-        {children}
+      <body className={`${inter.className} relative min-h-screen`} suppressHydrationWarning>
+        {/* Fixed background image */}
+        <div className="fixed inset-0 z-0">
+          <Image
+            src="/assets/background.jpg"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-[#260d00]/70"></div>
+        </div>
+        
+        {/* Main content */}
+        <main className="relative z-10">
+          {children}
+        </main>
       </body>
     </html>
   );
