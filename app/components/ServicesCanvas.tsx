@@ -6,19 +6,29 @@ import Canvas from './Canvas';
 // Service items data
 const services = [
   {
-    title: 'Web Design',
-    description: 'Beautiful, responsive websites tailored to your brand.',
-    image: "/service-design.jpg"
+    title: 'Website Design',
+    description: 'Custom, responsive designs that engage visitors and enhance your brand.',
+    image: "/assets/website design.jpeg"
   },
   {
     title: 'Development',
-    description: 'Custom functionality using the latest technologies.',
-    image: "/service-development.jpg"
+    description: 'Robust, scalable websites built with modern technologies.',
+    image: "/assets/development.jpeg"
   },
   {
     title: 'SEO',
-    description: 'Optimize your site to attract more visitors.',
-    image: "/service-seo.jpg"
+    description: 'Improve your visibility and drive organic traffic to your site.',
+    image: "/assets/seo.jpeg"
+  },
+  {
+    title: 'Content Strategy',
+    description: 'Compelling content that tells your story and drives engagement.',
+    image: "/assets/content strategy.jpeg"
+  },
+  {
+    title: 'Maintenance',
+    description: 'Keep your website secure, updated, and running smoothly.',
+    image: "/assets/maintenance.jpeg"
   }
 ];
 
