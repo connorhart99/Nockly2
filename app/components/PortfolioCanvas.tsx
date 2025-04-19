@@ -156,8 +156,8 @@ export default function PortfolioCanvas() {
             <div className="flex justify-center gap-8 mt-8">
               <button
                 onClick={() => instanceRef.current?.prev()}
-                className={`p-3 rounded-full bg-forest-green/80 hover:bg-forest-green transition-all transform hover:scale-110 ${
-                  currentSlide === 0 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-70 cursor-pointer'
+                className={`p-3 rounded-full bg-forest-green hover:bg-forest-green/90 transition-all transform hover:scale-110 ${
+                  currentSlide === 0 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-100 cursor-pointer'
                 }`}
                 disabled={currentSlide === 0}
                 aria-label="Previous slide"
@@ -175,8 +175,8 @@ export default function PortfolioCanvas() {
               </button>
               <button
                 onClick={() => instanceRef.current?.next()}
-                className={`p-3 rounded-full bg-forest-green/80 hover:bg-forest-green transition-all transform hover:scale-110 ${
-                  currentSlide === portfolioItems.length - 1 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-70 cursor-pointer'
+                className={`p-3 rounded-full bg-forest-green hover:bg-forest-green/90 transition-all transform hover:scale-110 ${
+                  currentSlide === portfolioItems.length - 1 ? 'opacity-30 cursor-not-allowed hover:scale-100' : 'opacity-100 cursor-pointer'
                 }`}
                 disabled={currentSlide === portfolioItems.length - 1}
                 aria-label="Next slide"
