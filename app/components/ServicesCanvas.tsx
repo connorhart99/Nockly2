@@ -42,8 +42,8 @@ const ServiceCard = ({
           isActive ? 'scale-100 opacity-100' : 'scale-75 opacity-50'
         }`}
       >
-        <div className="bg-forest-green rounded-lg overflow-hidden shadow-lg mx-2 md:mx-4">
-          <div className="relative h-[250px] md:h-[400px] overflow-hidden">
+        <div className="bg-forest-green rounded-lg overflow-hidden shadow-lg w-[90vw] md:w-[500px] max-w-[500px]">
+          <div className="relative aspect-square w-full">
             <img
               src={imageError ? '/placeholder.jpg' : image}
               alt={title}
@@ -51,7 +51,7 @@ const ServiceCard = ({
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="p-4 md:p-6 bg-forest-green text-center">
+          <div className="p-6 bg-forest-green text-center">
             <h3 className="text-xl md:text-2xl font-semibold mb-2">{title}</h3>
             <p className="text-sm md:text-base text-white/80">{description}</p>
           </div>
@@ -111,7 +111,9 @@ export default function ServicesCanvas() {
   return (
     <Canvas>
       <div className="w-full h-full flex flex-col items-center justify-center">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 px-4 text-center">Our Services</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 px-4 text-center">
+          Our Services
+        </h2>
         
         <div className="w-full max-w-7xl px-0 relative">
           <div ref={sliderRef} className="keen-slider">
@@ -171,7 +173,7 @@ export default function ServicesCanvas() {
 
       <style jsx global>{`
         .keen-slider {
-          min-height: 350px;
+          min-height: 500px;
           display: flex;
           overflow: visible !important;
         }
@@ -186,7 +188,7 @@ export default function ServicesCanvas() {
         }
         @media (min-width: 768px) {
           .keen-slider {
-            min-height: 500px;
+            min-height: 600px;
           }
           .keen-slider__slide {
             min-width: 600px;

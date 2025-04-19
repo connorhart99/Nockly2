@@ -48,10 +48,10 @@ const PortfolioCard = ({
         }`}
       >
         <div 
-          className="bg-forest-green rounded-lg overflow-hidden shadow-lg mx-2 md:mx-4 cursor-pointer"
+          className="bg-forest-green rounded-lg overflow-hidden shadow-lg w-[90vw] md:w-[500px] max-w-[500px]"
           onClick={handleClick}
         >
-          <div className="relative h-[250px] md:h-[400px] overflow-hidden">
+          <div className="relative aspect-square w-full">
             <img
               src={imageError ? '/placeholder.jpg' : image}
               alt={title}
@@ -66,7 +66,7 @@ const PortfolioCard = ({
               </div>
             )}
           </div>
-          <div className="p-4 md:p-6 bg-forest-green text-center">
+          <div className="p-6 bg-forest-green text-center">
             <h3 className="text-xl md:text-2xl font-semibold mb-2">{title}</h3>
             <a 
               href={externalUrl}
@@ -199,7 +199,7 @@ export default function PortfolioCanvas() {
 
       <style jsx global>{`
         .keen-slider {
-          min-height: 350px;
+          min-height: 500px;
           display: flex;
           overflow: visible !important;
         }
@@ -214,7 +214,7 @@ export default function PortfolioCanvas() {
         }
         @media (min-width: 768px) {
           .keen-slider {
-            min-height: 500px;
+            min-height: 600px;
           }
           .keen-slider__slide {
             min-width: 600px;
