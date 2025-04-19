@@ -46,7 +46,7 @@ export default function RootLayout({
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-[#260d00]/70"></div>
+          <div className="absolute inset-0 bg-dark-brown-70"></div>
         </div>
         
         {/* Main content */}

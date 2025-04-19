@@ -4,8 +4,46 @@
 
 :root {
   --background: #260d00;
-  --forest-green: #05421b;
+  --forest-green: #1a3a1a;
   --deep-burgundy: #380000;
+}
+
+@layer base {
+  :root {
+    --background: #260d00;
+    --forest-green: #1a3a1a;
+    --deep-burgundy: #380000;
+  }
+}
+
+@layer components {
+  .bg-dark-brown {
+    background-color: var(--background);
+  }
+  .bg-forest-green {
+    background-color: var(--forest-green);
+  }
+  .bg-deep-burgundy {
+    background-color: var(--deep-burgundy);
+  }
+  .text-dark-brown {
+    color: var(--background);
+  }
+  .text-forest-green {
+    color: var(--forest-green);
+  }
+  .text-deep-burgundy {
+    color: var(--deep-burgundy);
+  }
+  .border-dark-brown {
+    border-color: var(--background);
+  }
+  .border-forest-green {
+    border-color: var(--forest-green);
+  }
+  .border-deep-burgundy {
+    border-color: var(--deep-burgundy);
+  }
 }
 
 html {
