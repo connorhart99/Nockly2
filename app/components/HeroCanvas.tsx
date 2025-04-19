@@ -1,58 +1,37 @@
-import { useState, useEffect } from 'react';
 import Canvas from './Canvas';
-import PlaceholderImage from './Placeholder';
+import Image from 'next/image';
 
-const HeroCanvas = () => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageFailed, setImageFailed] = useState(false);
-
-  // Fallback image - dark green gradient
-  const fallbackImageUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080' viewBox='0 0 1920 1080'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='0' y1='0' x2='0' y2='1080'%3E%3Cstop offset='0' stop-color='%23260d00'/%3E%3Cstop offset='1' stop-color='%2305421b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='1920' height='1080'/%3E%3C/svg%3E";
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = '/hero-bg.jpg';
-    img.onload = () => setImageLoaded(true);
-    img.onerror = () => setImageFailed(true);
-
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, []);
-
+export default function HeroCanvas() {
   return (
     <Canvas className="relative">
       <div className="absolute inset-0 bg-dark-brown opacity-70 z-0"></div>
-      
-      {imageFailed ? (
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ 
-            backgroundImage: `url("${fallbackImageUrl}")`,
-            filter: 'brightness(0.5)'
-          }}
-        ></div>
-      ) : (
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ 
-            backgroundImage: imageLoaded ? 'url(/hero-bg.jpg)' : `url("${fallbackImageUrl}")`,
-            filter: 'brightness(0.4)'
-          }}
-        ></div>
-      )}
-      
-      <div className="z-10 relative text-center px-4">
-        <h1 className="text-5xl md:text-7xl font-bold mb-6">
-          We Craft Websites
-        </h1>
-        <p className="text-xl md:text-2xl max-w-2xl">
-          Beautiful, functional websites that elevate your brand
-        </p>
+      <div className="w-full h-full flex flex-col items-center justify-center relative z-10">
+        {/* Logo */}
+        <div className="w-64 h-64 md:w-96 md:h-96 lg:w-[32rem] lg:h-[32rem] relative">
+          <Image
+            src="/assets/Logo - Nockly 2 - White FG Transparent BG Square - (1).png"
+            alt="Nockly Logo"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        
+        {/* Swipe prompt */}
+        <div className="absolute bottom-8 text-center animate-bounce flex flex-col items-center">
+          <p className="text-sm md:text-base text-white/80 mb-2">Swipe</p>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke="currentColor" 
+            className="w-6 h-6 text-white/80"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+          </svg>
+        </div>
       </div>
     </Canvas>
   );
-};
-
-export default HeroCanvas; 
+} 
