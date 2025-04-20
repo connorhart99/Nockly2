@@ -7,7 +7,7 @@ const portfolioItems = [
   {
     title: "26 Mountains 2 Mayo",
     url: "26m2m.com",
-    image: "/assets/26m2m.png", 
+    image: "/assets/26m2m 2.png", 
     externalUrl: "https://www.26m2m.com"
   },
   {
