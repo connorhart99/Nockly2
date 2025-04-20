@@ -5,16 +5,16 @@ import Card from './Card';
 // Portfolio items using images from assets folder
 const portfolioItems = [
   {
+    title: "26 Mountains 2 Mayo",
+    url: "26m2m.com",
+    image: "/assets/26m2m.png", 
+    externalUrl: "https://www.26m2m.com"
+  },
+  {
     title: "Hart & Soul Walks",
     url: "hartandsoulretreats.co.uk",
     image: "/assets/hartandsoulretreats.png", 
     externalUrl: "https://hartandsoulretreats.co.uk"
-  },
-  {
-    title: "26 Mountains 2 Mayo",
-    url: "26m2m.com",
-    image: "/assets/26m2m.png", 
-    externalUrl: "https://26m2m.com"
   }
 ];
 
@@ -27,7 +27,7 @@ export default function PortfolioCanvas() {
     };
     
     const overlay = isActive ? (
-      <div className="absolute inset-0 bg-deep-burgundy/50 opacity-0 hover:opacity-90 transition-opacity duration-300 flex items-center justify-center">
+      <div className="absolute inset-0 bg-forest-green/80 opacity-0 hover:opacity-90 transition-opacity duration-300 flex items-center justify-center">
         <span className="text-xl font-semibold text-center px-4">
           View Website
         </span>
