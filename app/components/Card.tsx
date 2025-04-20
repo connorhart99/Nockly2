@@ -6,7 +6,6 @@ interface BaseCardProps {
   className?: string;
   onClick?: () => void;
   imageUrl?: string;
-  imageOverlay?: ReactNode;
   children?: ReactNode;
 }
 
@@ -16,7 +15,6 @@ export default function Card({
   className = "",
   onClick,
   imageUrl,
-  imageOverlay,
   children
 }: BaseCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -29,7 +27,7 @@ export default function Card({
         }`}
       >
         <div 
-          className={`bg-forest-green rounded-lg overflow-hidden shadow-lg w-[90vw] md:w-[500px] max-w-[500px] ${className}`}
+          className={`bg-forest-green rounded-lg overflow-hidden shadow-lg w-[90vw] md:w-[500px] max-w-[500px] cursor-pointer ${className}`}
           onClick={isActive && onClick ? onClick : undefined}
         >
           {imageUrl && (
@@ -40,7 +38,6 @@ export default function Card({
                 onError={() => setImageError(true)}
                 className="w-full h-full object-cover"
               />
-              {imageOverlay}
             </div>
           )}
           <div className="p-6 bg-forest-green text-center">

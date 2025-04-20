@@ -26,14 +26,6 @@ export default function PortfolioCanvas() {
       }
     };
     
-    const overlay = isActive ? (
-      <div className="absolute inset-0 bg-forest-green/80 opacity-0 hover:opacity-90 transition-opacity duration-300 flex items-center justify-center">
-        <span className="text-xl font-semibold text-center px-4">
-          View Website
-        </span>
-      </div>
-    ) : null;
-    
     return (
       <Card
         key={idx}
@@ -41,7 +33,6 @@ export default function PortfolioCanvas() {
         isActive={isActive}
         imageUrl={item.image}
         onClick={handleClick}
-        imageOverlay={overlay}
       >
         <a 
           href={item.externalUrl}
