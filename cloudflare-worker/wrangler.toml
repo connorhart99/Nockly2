@@ -1,0 +1,13 @@
+name = "nockly-contact-form"
+main = "src/index.ts"
+compatibility_date = "2024-04-20"
+
+[vars]
+# These will be set in the Cloudflare dashboard
+EMAIL_SERVICE = "sendgrid"
+API_KEY = "" # This will be set as a secret in the Cloudflare dashboard
+
+[[kv_namespaces]]
+binding = "CONTACT_SUBMISSIONS"
+id = "" # This will be set in the Cloudflare dashboard
+preview_id = "" # This will be set in the Cloudflare dashboard 

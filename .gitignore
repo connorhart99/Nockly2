@@ -45,3 +45,6 @@ next-env.d.ts
 # logs
 logs
 *.log
+
+# API routes with sensitive information
+/app/api/contact/route.ts
