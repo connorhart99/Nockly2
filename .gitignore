@@ -48,3 +48,11 @@ logs
 
 # API routes with sensitive information
 /app/api/contact/route.ts
+
+# Cloudflare Worker (contains sensitive configuration after deployment)
+/cloudflare-worker/
+wrangler.toml
+
+# Wrangler logs and configuration
+.wrangler/
+*.wranglerstate
