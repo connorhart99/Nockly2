@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "placeholders": "node scripts/generate-placeholders.js",
-    "setup": "node scripts/setup.js"
+    "setup": "node scripts/setup.js",
+    "deploy": "next build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
