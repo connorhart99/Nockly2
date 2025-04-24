@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function HeroCanvas() {
   return (
-    <Canvas className="relative">
+    <Canvas className="relative" id="hero">
       <div className="w-full h-full flex flex-col items-center justify-center relative z-10">
         {/* Logo */}
         <div className="w-64 h-64 md:w-96 md:h-96 lg:w-[32rem] lg:h-[32rem] relative">

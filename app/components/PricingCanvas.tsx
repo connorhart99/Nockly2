@@ -29,7 +29,7 @@ export default function PricingCanvas() {
   );
 
   return (
-    <Canvas>
+    <Canvas id="pricing">
       <CardSlider 
         items={pricingItems}
         renderCard={renderPricingCard}

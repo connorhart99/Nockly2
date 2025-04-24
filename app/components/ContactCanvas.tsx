@@ -2,7 +2,7 @@ import Canvas from './Canvas';
 
 const ContactCanvas = () => {
   return (
-    <Canvas>
+    <Canvas id="contact">
       <div className="flex flex-col items-center justify-center w-full h-full">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 px-4 text-center">
           Contact Us

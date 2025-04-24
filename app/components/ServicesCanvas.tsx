@@ -44,7 +44,7 @@ export default function ServicesCanvas() {
   );
 
   return (
-    <Canvas>
+    <Canvas id="services">
       <CardSlider 
         items={services}
         renderCard={renderServiceCard}

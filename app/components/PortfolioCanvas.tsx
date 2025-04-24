@@ -53,7 +53,7 @@ export default function PortfolioCanvas() {
   };
 
   return (
-    <Canvas>
+    <Canvas id="portfolio">
       <CardSlider 
         items={portfolioItems}
         renderCard={renderPortfolioCard}

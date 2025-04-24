@@ -44,7 +44,7 @@ export default function AboutCanvas() {
   );
 
   return (
-    <Canvas>
+    <Canvas id="about">
       <CardSlider
         items={aboutItems}
         renderCard={renderAboutCard}

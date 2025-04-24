@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
+import Menu from './components/Menu';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -48,6 +49,9 @@ export default function RootLayout({
           />
           <div className="absolute inset-0 bg-dark-brown-70"></div>
         </div>
+        
+        {/* Menu */}
+        <Menu />
         
         {/* Main content */}
         <main className="relative z-10">

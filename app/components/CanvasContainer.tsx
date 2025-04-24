@@ -2,6 +2,13 @@ import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import Canvas from './Canvas';
 
+// Define the global function type
+declare global {
+  interface Window {
+    setCanvasIndex?: (index: number) => void;
+  }
+}
+
 interface CanvasContainerProps {
   canvases: {
     id: string;
@@ -15,6 +22,22 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastInteractionTime = useRef<number>(0);
   const interactionCooldown = 300; // ms
+
+  // Set up global navigation function
+  useEffect(() => {
+    // Create an intentionally simple function that just updates the current index
+    window.setCanvasIndex = (index: number) => {
+      console.log(`Setting canvas index to: ${index}`);
+      if (index >= 0 && index < canvases.length) {
+        setCurrentIndex(index);
+      }
+    };
+
+    // Clean up
+    return () => {
+      window.setCanvasIndex = undefined;
+    };
+  }, [canvases.length]);
 
   // Handle keyboard navigation with throttling
   useEffect(() => {
@@ -112,6 +135,7 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
     <div 
       className="h-screen w-screen overflow-hidden touch-none will-change-transform" 
       ref={containerRef}
+      id="canvas-container"
     >
       <div 
         className="relative h-full w-full"
@@ -131,6 +155,8 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
             <motion.div
               key={canvas.id}
               className="absolute top-0 left-0 h-full w-full"
+              data-index={index}
+              id={`canvas-${canvas.id}`}
               initial={false}
               animate={{
                 y: `${position * 100}%`,
