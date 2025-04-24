@@ -69,53 +69,52 @@ const Menu = () => {
 
   return (
     <>
-      {/* Menu button - always visible in top left */}
+      {/* Menu button with improved styling */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 p-2 rounded-lg bg-forest-green/80 backdrop-blur-sm hover:bg-forest-green transition-colors z-[60]"
+        className="fixed top-5 left-5 p-2.5 rounded-lg bg-forest-green/90 hover:bg-forest-green transition-all duration-300 shadow-lg backdrop-blur-md z-[60] border border-white/10 hover:border-white/20"
         aria-label="Menu"
       >
-        <div className="w-6 h-6 flex flex-col justify-center gap-1">
-          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-          <span className={`block w-full h-0.5 bg-white transition-opacity duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+        <div className="w-6 h-5 flex flex-col justify-between">
+          <span className={`block w-full h-0.5 bg-white/90 rounded-full transition-all duration-300 transform ${isOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
+          <span className={`block w-full h-0.5 bg-white/90 rounded-full transition-all duration-300 ${isOpen ? 'opacity-0 scale-x-0' : 'opacity-100'}`} />
+          <span className={`block w-full h-0.5 bg-white/90 rounded-full transition-all duration-300 transform ${isOpen ? '-rotate-45 -translate-y-2' : ''}`} />
         </div>
       </button>
 
-      {/* Full-screen menu overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 w-full h-full bg-dark-brown/95 backdrop-blur-md z-50"
+      {/* Full-screen menu overlay - appears instantly */}
+      {isOpen && (
+        <div className="fixed inset-0 w-full h-full bg-dark-brown-70 backdrop-blur-lg z-50">
+          {/* Close button */}
+          <button 
+            className="absolute top-5 left-5 text-white/70 hover:text-white p-2.5 transition-colors"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
           >
-            <div className="w-full h-full flex items-center justify-center">
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 20, opacity: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className="flex flex-col items-center justify-center gap-6"
-              >
-                {sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => navigateToSection(section.index)}
-                    className={`text-3xl md:text-4xl font-light px-8 py-2 text-white hover:text-deep-burgundy transition-colors duration-300 ${
-                      currentIndex === section.index ? 'text-deep-burgundy' : ''
-                    }`}
-                  >
-                    {section.label}
-                  </button>
-                ))}
-              </motion.div>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-8 px-5">
+              {sections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => navigateToSection(section.index)}
+                  className={`relative text-4xl lg:text-5xl font-normal px-12 py-3 ${
+                    currentIndex === section.index 
+                      ? 'text-white bg-forest-green rounded-lg shadow-lg border border-white/20' 
+                      : 'text-white hover:bg-forest-green/30 hover:rounded-lg transition-all'
+                  }`}
+                >
+                  {section.label}
+                </button>
+              ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </>
   );
 };
