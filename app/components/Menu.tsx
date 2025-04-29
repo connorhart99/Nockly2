@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Event name must match the one in CanvasContainer
+const CANVAS_INDEX_CHANGE_EVENT = 'canvasindexchange';
+
 // Sections must match the order in the page.tsx file
 const sections = [
   { id: 'hero', label: 'Home', index: 0 },
@@ -15,40 +18,35 @@ const sections = [
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Initialize state from global variable if available, otherwise default to 0
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    return typeof window !== 'undefined' ? window.currentCanvasIndex ?? 0 : 0;
+  });
 
-  // Track which canvas is currently active
+  // Listen for canvas index changes from CanvasContainer
   useEffect(() => {
-    const checkActiveCanvas = () => {
-      // Check if we can find any visible canvases based on the data attribute
-      const visibleCanvases = document.querySelectorAll('.absolute.top-0.left-0.h-full.w-full');
-      
-      visibleCanvases.forEach(canvas => {
-        const transform = window.getComputedStyle(canvas).transform;
-        // If this canvas has no Y translation (meaning it's the current one)
-        if (transform.includes('matrix') && !transform.includes('translate3d(0px, 0px, 0px)') && 
-            Math.abs(parseFloat(transform.split(',')[5])) < 1) {
-          const index = parseInt(canvas.getAttribute('data-index') || '0');
-          if (!isNaN(index) && index !== currentIndex) {
-            setCurrentIndex(index);
-          }
-        }
-      });
+    const handleCanvasChange = (event: Event) => {
+      // Type assertion for CustomEvent
+      const customEvent = event as CustomEvent<{ index: number }>; 
+      const newIndex = customEvent.detail.index;
+      console.log(`Menu received ${CANVAS_INDEX_CHANGE_EVENT} with index: ${newIndex}`);
+      setCurrentIndex(newIndex); // Update menu state based on the event
     };
 
-    // Run the check periodically
-    const interval = setInterval(checkActiveCanvas, 200);
-    checkActiveCanvas(); // Check immediately on mount
-    
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+    window.addEventListener(CANVAS_INDEX_CHANGE_EVENT, handleCanvasChange);
+
+    // Clean up listener on component unmount
+    return () => {
+      window.removeEventListener(CANVAS_INDEX_CHANGE_EVENT, handleCanvasChange);
+    };
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Function to navigate to a specific section
   const navigateToSection = (index: number) => {
     if (typeof window.setCanvasIndex === 'function') {
       // Use the global function defined in CanvasContainer
       window.setCanvasIndex(index);
-      setCurrentIndex(index);
+      // REMOVE setCurrentIndex(index) from here - let the event listener handle it
       setIsOpen(false);
     } else {
       console.error("Navigation function not available");
@@ -83,38 +81,45 @@ const Menu = () => {
       </button>
 
       {/* Full-screen menu overlay - appears instantly */}
-      {isOpen && (
-        <div className="fixed inset-0 w-full h-full bg-dark-brown-70 backdrop-blur-lg z-50">
-          {/* Close button */}
-          <button 
-            className="absolute top-5 left-5 text-white/70 hover:text-white p-2.5 transition-colors"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close menu"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 w-full h-full bg-dark-brown-70 backdrop-blur-lg z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center gap-8 px-5">
-              {sections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => navigateToSection(section.index)}
-                  className={`relative text-4xl lg:text-5xl font-normal px-12 py-3 ${
-                    currentIndex === section.index 
-                      ? 'text-white bg-forest-green rounded-lg shadow-lg border border-white/20' 
-                      : 'text-white hover:bg-forest-green/30 hover:rounded-lg transition-all'
-                  }`}
-                >
-                  {section.label}
-                </button>
-              ))}
+            {/* Close button */}
+            <button 
+              className="absolute top-5 left-5 text-white/70 hover:text-white p-2.5 transition-colors"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-8 px-5">
+                {sections.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => navigateToSection(section.index)}
+                    className={`relative text-4xl lg:text-5xl font-normal px-12 py-3 ${
+                      currentIndex === section.index 
+                        ? 'text-white bg-forest-green rounded-lg shadow-lg border border-white/20' 
+                        : 'text-white hover:bg-forest-green/30 hover:rounded-lg transition-all'
+                    }`}
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

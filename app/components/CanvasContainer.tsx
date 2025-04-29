@@ -2,12 +2,16 @@ import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import Canvas from './Canvas';
 
-// Define the global function type
+// Define the global function and potentially a state variable type
 declare global {
   interface Window {
     setCanvasIndex?: (index: number) => void;
+    currentCanvasIndex?: number; // Optional: For initial state sync
   }
 }
+
+// Define event name
+const CANVAS_INDEX_CHANGE_EVENT = 'canvasindexchange';
 
 interface CanvasContainerProps {
   canvases: {
@@ -17,65 +21,107 @@ interface CanvasContainerProps {
 }
 
 const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, _setCurrentIndex] = useState(0); // Rename internal setter
   const [isDragging, setIsDragging] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastInteractionTime = useRef<number>(0);
   const interactionCooldown = 300; // ms
 
+  // Ref to track the actual index to avoid stale closure issues in event dispatch
+  const currentIndexRef = useRef(currentIndex);
+
+  // Effect to set initial global state
+  useEffect(() => {
+    window.currentCanvasIndex = 0;
+  }, []);
+
+  // Custom setter function to update state, ref, global var, and dispatch event
+  const setCurrentCanvasIndex = (newIndex: number) => {
+    if (newIndex === currentIndexRef.current) return; // Avoid redundant updates
+
+    _setCurrentIndex(newIndex); // Update React state
+    currentIndexRef.current = newIndex; // Update ref
+    window.currentCanvasIndex = newIndex; // Update global variable
+    
+    // Dispatch custom event
+    window.dispatchEvent(new CustomEvent(CANVAS_INDEX_CHANGE_EVENT, { 
+      detail: { index: newIndex } 
+    }));
+    
+    console.log(`Dispatched ${CANVAS_INDEX_CHANGE_EVENT} with index: ${newIndex}`);
+  };
+
   // Set up global navigation function
   useEffect(() => {
-    // Create an intentionally simple function that just updates the current index
     window.setCanvasIndex = (index: number) => {
-      console.log(`Setting canvas index to: ${index}`);
-      if (index >= 0 && index < canvases.length) {
-        setCurrentIndex(index);
+      console.log(`Global setCanvasIndex called with: ${index}`);
+      if (isAnimating) return;
+      const now = Date.now();
+      if (now - lastInteractionTime.current < interactionCooldown) return;
+
+      if (index >= 0 && index < canvases.length && index !== currentIndexRef.current) {
+        setIsAnimating(true);
+        // Use the custom setter
+        setCurrentCanvasIndex(index);
+        lastInteractionTime.current = now;
       }
     };
-
-    // Clean up
     return () => {
       window.setCanvasIndex = undefined;
     };
-  }, [canvases.length]);
+    // Depend on the actual state variable currentIndex
+  }, [canvases.length, isAnimating, currentIndex, interactionCooldown]); 
 
   // Handle keyboard navigation with throttling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isAnimating) return;
       const now = Date.now();
       if (now - lastInteractionTime.current < interactionCooldown) return;
       
-      if (e.key === 'ArrowUp' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-        lastInteractionTime.current = now;
-      } else if (e.key === 'ArrowDown' && currentIndex < canvases.length - 1) {
-        setCurrentIndex(prev => prev + 1);
+      let newIndex = currentIndexRef.current;
+      if (e.key === 'ArrowUp' && currentIndexRef.current > 0) {
+        newIndex = currentIndexRef.current - 1;
+      } else if (e.key === 'ArrowDown' && currentIndexRef.current < canvases.length - 1) {
+        newIndex = currentIndexRef.current + 1;
+      }
+
+      if (newIndex !== currentIndexRef.current) {
+        setIsAnimating(true);
+        // Use the custom setter
+        setCurrentCanvasIndex(newIndex);
         lastInteractionTime.current = now;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, canvases.length, interactionCooldown]);
+    // Depend on actual state
+  }, [canvases.length, interactionCooldown, isAnimating, currentIndex]); 
 
   // Optimized wheel/scroll navigation
   useEffect(() => {
-    // Use passive listener for better performance
     const handleWheel = (e: WheelEvent) => {
-      // Prevent default to stop browser scrolling behavior
       e.preventDefault();
+      if (isAnimating) return;
       
       const now = Date.now();
       if (now - lastInteractionTime.current < interactionCooldown) return;
       
-      // Use a higher threshold to reduce accidental scrolls
       const threshold = 20;
+      let newIndex = currentIndexRef.current;
       
-      if (e.deltaY < -threshold && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-        lastInteractionTime.current = now;
-      } else if (e.deltaY > threshold && currentIndex < canvases.length - 1) {
-        setCurrentIndex(prev => prev + 1);
+      if (e.deltaY < -threshold && currentIndexRef.current > 0) {
+        newIndex = currentIndexRef.current - 1;
+      } else if (e.deltaY > threshold && currentIndexRef.current < canvases.length - 1) {
+        newIndex = currentIndexRef.current + 1;
+      }
+
+      if (newIndex !== currentIndexRef.current) {
+        setIsAnimating(true);
+        // Use the custom setter
+        setCurrentCanvasIndex(newIndex);
         lastInteractionTime.current = now;
       }
     };
@@ -85,36 +131,46 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
       container.addEventListener('wheel', handleWheel, { passive: false });
       return () => container.removeEventListener('wheel', handleWheel);
     }
-  }, [currentIndex, canvases.length, interactionCooldown]);
+    // Depend on actual state
+  }, [canvases.length, interactionCooldown, isAnimating, currentIndex]); 
 
   // Optimized drag handling
-  const swipeThreshold = 50; // Pixels needed to swipe
+  const swipeThreshold = 50;
   
   const handleDragEnd = (info: any) => {
-    const now = Date.now();
-    if (now - lastInteractionTime.current < interactionCooldown) return;
-    
+    if (isAnimating) return;
+
     const offset = info.offset.y;
+    let newIndex = currentIndexRef.current;
     
-    if (offset > swipeThreshold && currentIndex > 0) {
-      // Swiped down, go to previous
-      setCurrentIndex(prev => prev - 1);
-      lastInteractionTime.current = now;
-    } else if (offset < -swipeThreshold && currentIndex < canvases.length - 1) {
-      // Swiped up, go to next
-      setCurrentIndex(prev => prev + 1);
-      lastInteractionTime.current = now;
+    if (offset > swipeThreshold && currentIndexRef.current > 0) {
+      newIndex = currentIndexRef.current - 1;
+    } else if (offset < -swipeThreshold && currentIndexRef.current < canvases.length - 1) {
+      newIndex = currentIndexRef.current + 1;
+    }
+    
+    if (newIndex !== currentIndexRef.current) {
+      setIsAnimating(true);
+      // Use the custom setter
+      setCurrentCanvasIndex(newIndex);
+      lastInteractionTime.current = Date.now();
+    } else {
+      // Snap back handled implicitly
     }
   };
 
-  // Handle direct navigation to a specific canvas
+  // Handle direct navigation to a specific canvas (e.g., potentially internal buttons, though Menu uses global)
+  // We keep this separate, but it should also use the custom setter if it modifies the index.
   const handleIndicatorClick = (index: number) => {
-    if (index === currentIndex) return;
+    if (isAnimating) return;
+    if (index === currentIndexRef.current) return;
     
     const now = Date.now();
     if (now - lastInteractionTime.current < interactionCooldown) return;
     
-    setCurrentIndex(index);
+    setIsAnimating(true);
+    // Use the custom setter
+    setCurrentCanvasIndex(index);
     lastInteractionTime.current = now;
   };
 
@@ -164,11 +220,9 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
                 zIndex: 10 - Math.abs(position),
               }}
               transition={{
-                type: 'spring',
-                stiffness: 300, // Reduced from 400 to be gentler
-                damping: 40, // Increased from 30 for less oscillation
-                restDelta: 0.005, // Reduced precision to improve performance
-                restSpeed: 0.005, // Added to stop animation sooner
+                type: 'tween',
+                ease: 'easeOut',
+                duration: 0.3
               }}
               style={{
                 willChange: 'transform',
@@ -184,6 +238,9 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvases }) => {
               onDragEnd={(e, info) => {
                 setIsDragging(false);
                 handleDragEnd(info);
+              }}
+              onAnimationComplete={() => {
+                setIsAnimating(false);
               }}
             >
               {canvas.content}

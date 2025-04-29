@@ -63,9 +63,9 @@ export default function CardSlider({ items, renderCard, title }: CardSliderProps
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.5) {
         e.preventDefault();
         if (instanceRef.current) {
-          if (e.deltaX > 50) {
+          if (e.deltaX > 100) {
             instanceRef.current.next();
-          } else if (e.deltaX < -50) {
+          } else if (e.deltaX < -100) {
             instanceRef.current.prev();
           }
         }

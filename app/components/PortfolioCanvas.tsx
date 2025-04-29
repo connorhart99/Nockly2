@@ -11,6 +11,12 @@ const portfolioItems = [
     externalUrl: "https://www.26m2m.com"
   },
   {
+    title: "Thrive Happens",
+    url: "thrivehappens.com",
+    image: "/assets/thrivehappens.png", 
+    externalUrl: "https://thrivehappens.com"
+  },
+  {
     title: "Hart & Soul Walks",
     url: "hartandsoulretreats.co.uk",
     image: "/assets/hartandsoulretreats.png", 
